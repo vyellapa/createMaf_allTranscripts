@@ -6,7 +6,7 @@ use IO::File;
 use Genome;
 
 if( scalar( @ARGV ) != 2 ) {
-  print STDERR "Usage: perl $0 <anno_file_dir> <output_maf>\n";
+  print STDERR "Usage: perl $0 <anno_file_dir/anno_file> <output_maf>\n";
   exit 1;
 }
 
@@ -14,20 +14,9 @@ if( scalar( @ARGV ) != 2 ) {
 my $anno_files_dir = $ARGV[0];
 my $final_maf_file = $ARGV[1];
 
-my %anno_files = map {chomp; m/files\/(.*).anno/; ($1, $_)} `ls $anno_files_dir/*.anno`;
+my %anno_files = map {chomp; m/files\/(.*).anno/; ($1, $_)} `ls $anno_files_dir`;
 my $out_maf_fh = IO::File->new( $final_maf_file, ">" ) or die "Cannot open $final_maf_file. $!";
-$out_maf_fh->print( "Hugo_Symbol\tEntrez_Gene_Id\tCenter\tNCBI_Build\tChromosome\tStart_Position\t",
-                    "End_Position\tStrand\tVariant_Classification\tVariant_Type\tReference_Allele\t",
-                    "Tumor_Seq_Allele1\tTumor_Seq_Allele2\tdbSNP_RS\tdbSNP_Val_Status\t",
-                    "Tumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tMatch_Norm_Seq_Allele1\t",
-                    "Match_Norm_Seq_Allele2\tTumor_Validation_Allele1\tTumor_Validation_Allele2\t",
-                    "Match_Norm_Validation_Allele1\tMatch_Norm_Validation_Allele2\t",
-                    "Verification_Status\tValidation_Status\tMutation_Status\tSequencing_Phase\t",
-                    "Sequence_Source\tValidation_Method\tScore\tBAM_File\tSequencer\t",
-                    "chromosome_name\tstart\tstop\treference\tvariant\ttype\tgene_name\t",
-                    "transcript_name\ttranscript_species\ttranscript_source\ttranscript_version\t",
-                    "strand\ttranscript_status\ttrv_type\tc_position\tamino_acid_change\tucsc_cons\t",
-                    "domain\tall_domains\tdeletion_substructures\ttranscript_error\n" );
+$out_maf_fh->print("Hugo_Symbol\tEntrez_Gene_Id\tCenter\tNCBI_Build\tChromosome\tStart_Position\tEnd_Position\tStrand\tVariant_Classification\tVariant_Type\tReference_Allele\tTumor_Seq_Allele1\tTumor_Seq_Allele2\tdbSNP_RS\tdbSNP_Val_Status\tTumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tMatch_Norm_Seq_Allele1\tMatch_Norm_Seq_Allele2\tTumor_Validation_Allele1\tTumor_Validation_Allele2\tMatch_Norm_Validation_Allele1\tMatch_Norm_Validation_Allele2\tVerification_Status\tValidation_Status\tMutation_Status\tSequencing_Phase\tSequence_Source\tValidation_Method\tScore\tBAM_File\tSequencer\tTumor_Sample_UUID\tMatched_Norm_Sample_UUID\tchromosome_name\tstart\tstop\treference\tvariant\ttype\tgene_name\ttranscript_name\ttranscript_species\ttranscript_source\ttranscript_version\tstrand\ttranscript_status\ttrv_type\tc_position\tamino_acid_change\tucsc_cons\tdomain\tall_domains\tdeletion_substructures\ttranscript_error\n"); 
 foreach my $case ( keys %anno_files ) {
     my $anno_file = $anno_files{$case};
     my %enst=map{chomp; my @a=split(/\t/); ($_,1)}`cat $anno_file|cut -f8|sort -u|grep "^ENST"`;
